@@ -28,5 +28,5 @@ def upgrade_plex():
     extra_vars = "plex_server_version: {}".format(plex_version)
     app.logger.info("Sending update job request to update to version {}".format(plex_version))
     execution = plex_update_job_template.launch(extra_vars=extra_vars)
-    app.logger.info("Job status: {}").format(execution.status)
+    app.logger.info("Job status: {}".format(execution.status))
     return execution.status

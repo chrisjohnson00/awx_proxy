@@ -25,7 +25,7 @@ def health_check():
         if value is None:
             raise Exception("{} missing from config".format(config))
     # can i connect to tower?
-    tower = Tower(app.config.get('TOWER_HOST'), app.config.get('TOWER_USER'), app.config.get('TOWER_PASSWORD'))
+    Tower(app.config.get('TOWER_HOST'), app.config.get('TOWER_USER'), app.config.get('TOWER_PASSWORD'))
     return "Success"
 
 

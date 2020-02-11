@@ -17,6 +17,18 @@ def hello():
     return "Welcome the AWX Proxy!"
 
 
+@app.route('/health')
+def health_check():
+    required_configs = ['TOWER_HOST', 'TOWER_USER', 'TOWER_PASSWORD']
+    for config in required_configs:
+        value = app.config.get(config)
+        if value is None:
+            raise Exception("{} missing from config".format(config))
+    # can i connect to tower?
+    tower = Tower(app.config.get('TOWER_HOST'), app.config.get('TOWER_USER'), app.config.get('TOWER_PASSWORD'))
+    return "Success"
+
+
 @app.route('/upgrade_plex', methods=['GET', 'POST'])
 def upgrade_plex():
     app.logger.info("Upgrade Plex Called, running against tower host: {}".format(app.config.get('TOWER_HOST')))

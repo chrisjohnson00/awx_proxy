@@ -3,7 +3,7 @@ from awx_proxy.models import PlexDownloads
 
 def test_get_latest_version_from_plex():
     """
-    This tests the download url to ensure it gives a proper response
+    Tests the download url to ensure it gives a proper response.
     If this fails, check the `plex_download_url` for valid-ness, it may have changed
     """
     plex = PlexDownloads()

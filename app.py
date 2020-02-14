@@ -6,7 +6,6 @@ import sys
 
 app = Flask(__name__)
 app.config.from_pyfile('instance/config.py', silent=False)
-"""Configure loggers."""
 handler = logging.StreamHandler(sys.stdout)
 app.logger.setLevel(logging.DEBUG)
 app.logger.addHandler(handler)

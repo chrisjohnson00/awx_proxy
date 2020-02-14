@@ -1,5 +1,5 @@
 """
-This file contains all the models for the awx proxy.
+PlexDownloads is the class to rule all the plexes functionalities
 """
 import json
 import requests

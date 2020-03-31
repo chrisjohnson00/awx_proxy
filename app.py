@@ -3,9 +3,18 @@ from towerlib import Tower
 from awx_proxy.models import PlexDownloads
 import logging
 import sys
+import consul
 
 app = Flask(__name__)
-app.config.from_pyfile('instance/config.py', silent=False)
+c = consul.Consul()
+consul_path = "awx_proxy/"
+keys = c.kv.get(consul_path, keys=True)
+config_keys = keys[1]
+for key in config_keys:
+    if key != consul_path:
+        config_key = key.replace(consul_path, '')
+        index, data = c.kv.get(key)
+        app.config[config_key] = data['Value'].decode("utf-8")
 handler = logging.StreamHandler(sys.stdout)
 app.logger.setLevel(logging.DEBUG)
 app.logger.addHandler(handler)

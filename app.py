@@ -4,6 +4,7 @@ from awx_proxy.models import PlexDownloads
 import logging
 import sys
 import consul
+import os
 
 app = Flask(__name__)
 c = consul.Consul()
@@ -13,12 +14,15 @@ config_keys = keys[1]
 for key in config_keys:
     if key != consul_path:
         config_key = key.replace(consul_path, '')
-        index, data = c.kv.get(key)
-        app.config[config_key] = data['Value'].decode("utf-8")
+        if os.environ.get(config_key):
+            app.config[config_key] = os.environ.get(config_key)
+        else:
+            index, data = c.kv.get(key)
+            app.config[config_key] = data['Value'].decode("utf-8")
 handler = logging.StreamHandler(sys.stdout)
 app.logger.setLevel(logging.DEBUG)
 app.logger.addHandler(handler)
-
+required_configs = ['TOWER_HOST', 'TOWER_USER', 'TOWER_PASSWORD']
 
 @app.route('/')
 def hello():
@@ -27,7 +31,6 @@ def hello():
 
 @app.route('/health')
 def health_check():
-    required_configs = ['TOWER_HOST', 'TOWER_USER', 'TOWER_PASSWORD']
     for config in required_configs:
         value = app.config.get(config)
         if value is None:
@@ -35,6 +38,18 @@ def health_check():
     # can i connect to tower?
     Tower(app.config.get('TOWER_HOST'), app.config.get('TOWER_USER'), app.config.get('TOWER_PASSWORD'))
     return "Success"
+
+
+@app.route('/config')
+def config():
+    response_text = ""
+    for config in required_configs:
+        value = app.config.get(config)
+        if any(secret in config for secret in ['KEY', 'TOKEN', 'PASSWORD']):
+            response_text += "{}: [REDACTED]<br/>".format(config)
+        else:
+            response_text += "{}: {}<br/>".format(config, value)
+    return response_text
 
 
 @app.route('/upgrade_plex', methods=['GET', 'POST'])

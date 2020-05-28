@@ -24,6 +24,7 @@ app.logger.setLevel(logging.DEBUG)
 app.logger.addHandler(handler)
 required_configs = ['TOWER_HOST', 'TOWER_USER', 'TOWER_PASSWORD']
 
+
 @app.route('/')
 def hello():
     return "Welcome the AWX Proxy!"
